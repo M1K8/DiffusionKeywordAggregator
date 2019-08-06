@@ -56,6 +56,8 @@ namespace DiffusionKeywordAggregator
 
             var session = Diffusion.Sessions.Principal("client").Password("password").Open("ws://localhost:8080");
 
+            //var d = Diffusion.DataTypes.JSON.FromJSONString("");
+
             List<string> listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour = new List<String>
             {
                 "Zealiostotle",
@@ -258,7 +260,10 @@ namespace DiffusionKeywordAggregator
             /// <param name="oldValue">Value prior to update.</param>
             /// <param name="newValue">Value after update.</param>
             public void OnValue(string topicPath, ITopicSpecification specification, IJSON oldValue, IJSON newValue)
-                => Console.WriteLine($"New value of {topicPath} is {newValue.ToJSONString()}.");
+            { 
+                //put JSON processing here
+                Console.WriteLine($"New value of {topicPath} is {newValue.ToJSONString()}.");
+            }
         }
     }
 
