@@ -21,6 +21,26 @@ using PushTechnology.DiffusionCore.Client.Types;
 namespace DiffusionKeywordAggregator
 {
     class SubscriberAgent
+
+
+    /*
+     JSON Obj Schema(ish)
+     {
+        "keyword" = str
+        "website" = reddit || twitter
+        "occurences" : n >= 0
+        "start_tstamp" :
+        "end_tstamp" :
+     }
+
+    then, where str1 = str2
+
+    {
+       "keyword" = str
+       "total_occurences" = n + n
+       "start_tstamp" :
+       "end_tstamp" :  rounded the the median or both to account for slight timing drifts 
+    */
     {
         static async void asyncAuth()
         {
