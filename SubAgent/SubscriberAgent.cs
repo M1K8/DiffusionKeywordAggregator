@@ -1,15 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using PushTechnology.ClientInterface;
 using PushTechnology.ClientInterface.Client.Callbacks;
 using PushTechnology.ClientInterface.Client.Factories;
 using PushTechnology.ClientInterface.Client.Features;
 using PushTechnology.ClientInterface.Client.Features.Control;
 using PushTechnology.ClientInterface.Client.Features.Control.Clients;
 using PushTechnology.ClientInterface.Client.Features.Control.Topics;
+using PushTechnology.ClientInterface.Client.Features.TimeSeries;
 using PushTechnology.ClientInterface.Client.Features.Topics;
 using PushTechnology.ClientInterface.Client.Security.Authentication;
 using PushTechnology.ClientInterface.Client.Session;
@@ -26,7 +25,7 @@ namespace DiffusionKeywordAggregator
     /*
      JSON Obj Schema(ish)
      {
-        "keyword" = str
+        "keyword" = stra
         "website" = reddit || twitter
         "occurences" : n >= 0
         "start_tstamp" :
@@ -51,40 +50,39 @@ namespace DiffusionKeywordAggregator
 
         static void Main(string[] args)
         {
+            Console.WriteLine("Starting...");
             //set up auth 
             asyncAuth();
 
-            var session = Diffusion.Sessions.Principal("client").Password("password").Open("ws://localhost:8080");
+            Console.WriteLine("Done Auth!");
 
-            //var d = Diffusion.DataTypes.JSON.FromJSONString("");
+            var session = Diffusion.Sessions.Principal("client").Password("password").Open("ws://localhost:8080");
 
             List<string> listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour = new List<String>
             {
                 "Zealiostotle",
-                "Drogba",
                 "omegaLUL",
-                "pepega",
-                "Modern Warfare "
+                "yeet",
+                "Modern Warfare"
             };
 
-            var j = new JSONStream();
+            //session.TopicControl.RemoveTopicsAsync("the");
+            
+            session.Topics.AddTimeSeriesStream(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] , new JSONStream());
 
-            session.Topics.AddStream(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2], j);
+            session.Topics.SubscribeAsync(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] ).Wait();
 
-            session.Topics.SubscribeAsync(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2]).Wait();
 
-            Thread.Sleep(TimeSpan.FromMinutes(10));
+            Console.WriteLine("Subbed");
+
+            Thread.Sleep(Timeout.Infinite);
 
             session.Close();
         }
 
         public sealed class AuthenticationD
         {
-            /// <summary>
-            /// Runs the authenticator client example.
-            /// </summary>
-            /// <param name="cancellationToken">A token used to end the client example.</param>
-            /// <param name="args">A single string should be used for the server url.</param>
+
             public async Task Run(CancellationToken cancellationToken, string serverUrl)
             {
                 // Connect as a control session
@@ -148,9 +146,9 @@ namespace DiffusionKeywordAggregator
                 var topicControl = session.TopicControl;
 
                 List<String> strL = new List<String>
-            {
-                SessionProperty.PRINCIPAL
-            };
+                {
+                    SessionProperty.PRINCIPAL
+                };
 
                 session.ClientControl.GetSessionProperties(notification.SessionId, strL, new PropCallback());
 
@@ -216,53 +214,29 @@ namespace DiffusionKeywordAggregator
             public void OnError(ErrorReason errorReason) => Console.WriteLine($"Error {errorReason}");
         }
 
-        private sealed class JSONStream : IValueStream<IJSON>
+        private sealed class JSONStream : IValueStream<IEvent<IJSON>>
         {
-            /// <summary>
-            /// Notification of stream being closed normally.
-            /// </summary>
+
             public void OnClose()
                 => Console.WriteLine("The subscrption stream is now closed.");
 
-            /// <summary>
-            /// Notification of a contextual error related to this callback.
-            /// </summary>
-            /// <remarks>
-            /// Situations in which <code>OnError</code> is called include the session being closed, a communication
-            /// timeout, or a problem with the provided parameters. No further calls will be made to this callback.
-            /// </remarks>
-            /// <param name="errorReason">Error reason.</param>
             public void OnError(ErrorReason errorReason)
                 => Console.WriteLine($"An error has occured : {errorReason}.");
 
-            /// <summary>
-            /// Notification of a successful subscription.
-            /// </summary>
-            /// <param name="topicPath">Topic path.</param>
-            /// <param name="specification">Topic specification.</param>
+ 
             public void OnSubscription(string topicPath, ITopicSpecification specification)
                 => Console.WriteLine($"Client subscribed to {topicPath}.");
 
-            /// <summary>
-            /// Notification of a successful unsubscription.
-            /// </summary>
-            /// <param name="topicPath">Topic path.</param>
-            /// <param name="specification">Topic specification.</param>
-            /// <param name="reason">Error reason.</param>
             public void OnUnsubscription(string topicPath, ITopicSpecification specification, TopicUnsubscribeReason reason)
                 => Console.WriteLine($"Client unsubscribed from {topicPath} : {reason}.");
 
-            /// <summary>
-            /// Topic update received.
-            /// </summary>
-            /// <param name="topicPath">Topic path.</param>
-            /// <param name="specification">Topic specification.</param>
-            /// <param name="oldValue">Value prior to update.</param>
-            /// <param name="newValue">Value after update.</param>
-            public void OnValue(string topicPath, ITopicSpecification specification, IJSON oldValue, IJSON newValue)
-            { 
+
+            public void OnValue(string topicPath, ITopicSpecification specification, IEvent<IJSON> oldValue, IEvent<IJSON> newValue)
+            {
                 //put JSON processing here
-                Console.WriteLine($"New value of {topicPath} is {newValue.ToJSONString()}.");
+                Console.WriteLine($"New value of {topicPath} is {newValue.Value.ToJSONString()}.");
+
+                //var d = Diffusion.DataTypes.JSON.FromJSONString(newValue);
             }
         }
     }

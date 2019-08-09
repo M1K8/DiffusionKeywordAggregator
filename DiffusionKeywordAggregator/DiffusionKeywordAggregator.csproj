@@ -7,6 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="Diffusion.Client" Version="6.3.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
   </ItemGroup>
 
 </Project>
