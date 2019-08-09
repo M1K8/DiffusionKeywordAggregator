@@ -14,7 +14,7 @@ namespace DiffusionKeywordAggregator
 
         class Prop : ITopicSpecification
         {
-            public TopicType Type { get; } = TopicType.TIME_SERIES;
+            public TopicType Type { get; } = TopicType.JSON;
 
             private Dictionary<string, string> dict;
 
@@ -58,7 +58,7 @@ namespace DiffusionKeywordAggregator
 
 
 
-            await session.TimeSeries.AppendAsync<IJSON>(keyword, Diffusion.DataTypes.JSON.FromJSONString(newValue));
+            await session.TopicUpdate.SetAsync<IJSON>(keyword, Diffusion.DataTypes.JSON.FromJSONString(newValue));
 
 
 

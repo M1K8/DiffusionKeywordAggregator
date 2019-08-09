@@ -56,7 +56,7 @@ namespace DiffusionKeywordAggregator
 
             Console.WriteLine("Done Auth!");
 
-            var session = Diffusion.Sessions.Principal("client").Password("password").Open("ws://localhost:8080");
+            var session = Diffusion.Sessions.Principal("admin").Password("password").Open("ws://localhost:8080");
 
             List<string> listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour = new List<String>
             {
@@ -66,11 +66,23 @@ namespace DiffusionKeywordAggregator
                 "Modern Warfare"
             };
 
-            //session.TopicControl.RemoveTopicsAsync("the");
-            
-            session.Topics.AddTimeSeriesStream(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] , new JSONStream());
+            session.TopicControl.RemoveTopicsAsync("yeet").Wait();
 
-            session.Topics.SubscribeAsync(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] ).Wait();
+   
+
+            
+            session.Topics.AddStream(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] , new JSONStream());
+
+       //     session.Topics.SubscribeAsync(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] ).Wait();
+
+            session.Topics.CreateTopicViewAsync("count", "map >yeet to count as <value(/count)>").Wait();
+
+            session.Topics.AddStream("count", new JSONStream());
+
+            session.Topics.SubscribeAsync("count").Wait(); 
+
+
+
 
 
             Console.WriteLine("Subbed");
@@ -214,7 +226,7 @@ namespace DiffusionKeywordAggregator
             public void OnError(ErrorReason errorReason) => Console.WriteLine($"Error {errorReason}");
         }
 
-        private sealed class JSONStream : IValueStream<IEvent<IJSON>>
+        private sealed class JSONStreamT : IValueStream<IEvent<IJSON>>
         {
 
             public void OnClose()
@@ -235,6 +247,34 @@ namespace DiffusionKeywordAggregator
             {
                 //put JSON processing here
                 Console.WriteLine($"New value of {topicPath} is {newValue.Value.ToJSONString()}.");
+
+                //var d = Diffusion.DataTypes.JSON.FromJSONString(newValue);
+            }
+        }
+
+
+
+        private sealed class JSONStream : IValueStream<IJSON>
+        {
+
+            public void OnClose()
+                => Console.WriteLine("The subscrption stream is now closed.");
+
+            public void OnError(ErrorReason errorReason)
+                => Console.WriteLine($"An error has occured : {errorReason}.");
+
+
+            public void OnSubscription(string topicPath, ITopicSpecification specification)
+                => Console.WriteLine($"Client subscribed to {topicPath}.");
+
+            public void OnUnsubscription(string topicPath, ITopicSpecification specification, TopicUnsubscribeReason reason)
+                => Console.WriteLine($"Client unsubscribed from {topicPath} : {reason}.");
+
+
+            public void OnValue(string topicPath, ITopicSpecification specification, IJSON oldValue, IJSON newValue)
+            {
+                //put JSON processing here
+                Console.WriteLine($"New value of {topicPath} is {newValue.ToJSONString()}.");
 
                 //var d = Diffusion.DataTypes.JSON.FromJSONString(newValue);
             }

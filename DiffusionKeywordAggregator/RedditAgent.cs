@@ -1,9 +1,6 @@
-﻿using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
+﻿using Newtonsoft.Json.Linq;
 using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -34,15 +31,11 @@ namespace DiffusionKeywordAggregator
                 var commStr = "https://api.pushshift.io/reddit/comment/search/" + boilerplate;
                 Task<HttpResponseMessage> responseComments = client.GetAsync(commStr);
 
-                //Console.WriteLine(postStr);
 
-                //Console.Write(commStr+"        ");
-
-
-                var postRes = await responsePosts;
+                HttpResponseMessage postRes = await responsePosts;
                 postRes.EnsureSuccessStatusCode();
 
-                var commRes = await responseComments;
+                HttpResponseMessage commRes = await responseComments;
                 commRes.EnsureSuccessStatusCode();
 
 
@@ -53,7 +46,11 @@ namespace DiffusionKeywordAggregator
                 string post = await responsePostsBody;
                 string comms = await responseCommentsBody;
 
-                
+                responsePostsBody.Dispose();
+
+                responseCommentsBody.Dispose();
+
+
 
                 var jPost = JObject.Parse(post);
 
@@ -81,7 +78,7 @@ namespace DiffusionKeywordAggregator
                 prev = ((long)(DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds) - 300);
 
                 //Console.WriteLine("Waiting 60 seconds...");
-                //Thread.Sleep(TimeSpan.FromMilliseconds(60000));
+                Thread.Sleep(TimeSpan.FromMilliseconds(500));
             }
         }
     }

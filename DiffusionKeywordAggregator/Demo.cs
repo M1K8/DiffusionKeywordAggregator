@@ -11,14 +11,9 @@ namespace DiffusionKeywordAggregator
         {
             var r = new RedditAgent("yeet");
 
-            var t = new TwitterAgent("yeet");
+            r.Run().Wait();
 
-
-            r.Run();
-
-            //t.Run();
-
-            Thread.Sleep(Timeout.Infinite);
+            //Thread.Sleep(Timeout.Infinite);
         }
     }
 }
