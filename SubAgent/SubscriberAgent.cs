@@ -19,7 +19,7 @@ using PushTechnology.DiffusionCore.Client.Types;
 
 namespace DiffusionKeywordAggregator
 {
-    class SubscriberAgent
+    public class SubscriberAgent
 
 
     /*
@@ -31,15 +31,7 @@ namespace DiffusionKeywordAggregator
         "start_tstamp" :
         "end_tstamp" :
      }
-
-    then, where str1 = str2
-
-    {
-       "keyword" = str
-       "total_occurences" = n + n
-       "start_tstamp" :
-       "end_tstamp" :  rounded the the median or both to account for slight timing drifts 
-    */
+*/
     {
         static async void asyncAuth()
         {
@@ -48,7 +40,7 @@ namespace DiffusionKeywordAggregator
         }
 
 
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             Console.WriteLine("Starting...");
             //set up auth 
@@ -73,9 +65,9 @@ namespace DiffusionKeywordAggregator
             
             session.Topics.AddStream(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] , new JSONStream());
 
-       //     session.Topics.SubscribeAsync(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] ).Wait();
+          //session.Topics.SubscribeAsync(listofWordsThatActuallyHaveLittleSignificanceButAreRandomEnoughNotToGoOverDesignantedApiCallsPerHour[2] ).Wait();
 
-            session.Topics.CreateTopicViewAsync("count", "map >yeet to count as <value(/count)>").Wait();
+            session.Topics.CreateTopicViewAsync("count", "map >yeet to count as <value(/info)>").Wait();
 
             session.Topics.AddStream("count", new JSONStream());
 

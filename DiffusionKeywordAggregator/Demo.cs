@@ -5,15 +5,16 @@ using System.Threading;
 
 namespace DiffusionKeywordAggregator
 {
-    class Demo
+    public static class Demo
     {
-        static void Main(string[] args)
+        public static void Main(string[] args)
         {
             var r = new RedditAgent("yeet");
+            var t = new TwitterAgent("yeet");
 
-            r.Run().Wait();
-
-            //Thread.Sleep(Timeout.Infinite);
+            r.Run();
+            t.Run().Wait();
         }
     }
 }
+    

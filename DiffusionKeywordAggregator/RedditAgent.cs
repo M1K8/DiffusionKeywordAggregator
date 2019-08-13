@@ -15,14 +15,13 @@ namespace DiffusionKeywordAggregator
 
             result = 0;
 
-            prev = ((long) (DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds - 300 ));
+            prev = ((long) (DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds - 100 ));
         }
 
         public async Task Run()
         {
             while (true)
             {
-                Console.WriteLine(prev);
                 string boilerplate = "?q=" + searchTerm + "&aggs=subreddit&after=" + prev;
                 result = 0;
                 var postStr = "https://api.pushshift.io/reddit/submission/search/" + boilerplate;
@@ -33,19 +32,23 @@ namespace DiffusionKeywordAggregator
 
 
                 HttpResponseMessage postRes = await responsePosts;
+                Task<string> responsePostsBody = postRes.Content.ReadAsStringAsync();
                 postRes.EnsureSuccessStatusCode();
 
                 HttpResponseMessage commRes = await responseComments;
+                Task<string> responseCommentsBody = commRes.Content.ReadAsStringAsync();
                 commRes.EnsureSuccessStatusCode();
 
 
-                Task<string> responsePostsBody = postRes.Content.ReadAsStringAsync();
 
-                Task<string> responseCommentsBody = commRes.Content.ReadAsStringAsync();
+
 
                 string post = await responsePostsBody;
                 string comms = await responseCommentsBody;
 
+
+                postRes.Dispose();
+                commRes.Dispose();
                 responsePostsBody.Dispose();
 
                 responseCommentsBody.Dispose();
@@ -75,10 +78,9 @@ namespace DiffusionKeywordAggregator
 
 
                 await publish();
-                prev = ((long)(DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds) - 300);
+                prev = ((long)(DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds) - 100);
 
-                //Console.WriteLine("Waiting 60 seconds...");
-                Thread.Sleep(TimeSpan.FromMilliseconds(500));
+                Thread.Sleep(TimeSpan.FromMilliseconds(10000));
             }
         }
     }

@@ -40,11 +40,12 @@ namespace DiffusionKeywordAggregator
                 .Password("password")
                 .Open("ws://localhost:8080");
 
-            var newValue = string.Format("{{" +
-                "\"keyword\": \"{0}\"," +
-                "\"website\": \"{1}\"," +
-                "\"count\": {2}" +
-                "}}", keyword, website,numOfHits);
+            var newValue = string.Format("{{\n" +
+                "\"keyword\": \"{0}\",\n" +
+                "\"info\" : \n{{ \n\"count\": {2} ,\n" +
+                "\"website\": \"{1}\",\n" +
+                "\"timestamp\": \"{3}\" \n }}\n  " +
+                "}}", keyword, website,numOfHits, ((long)(DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds) - 300).ToString() );
 
             Console.WriteLine(newValue);
 
