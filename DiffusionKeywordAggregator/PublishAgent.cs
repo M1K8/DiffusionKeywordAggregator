@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 
 namespace DiffusionKeywordAggregator
 {
-    class PublishAgent
+    public class PublishAgent
     {
-
+        public string res = "";
         class Prop : ITopicSpecification
         {
             public TopicType Type { get; } = TopicType.JSON;
@@ -47,7 +47,7 @@ namespace DiffusionKeywordAggregator
                 "\"timestamp\": \"{3}\" \n }}\n  " +
                 "}}", keyword, website,numOfHits, ((long)(DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds) - 300).ToString() );
 
-            Console.WriteLine(newValue);
+           
 
             Dictionary<string, string> dict = new Dictionary<string, string>
             {
@@ -55,15 +55,19 @@ namespace DiffusionKeywordAggregator
             };
 
 
-            await session.TopicControl.AddTopicAsync(keyword, new Prop(dict), new CancellationToken());
+            await session.TopicControl.AddTopicAsync(keyword, new Prop(dict), new CancellationToken()).ConfigureAwait(false);
 
 
 
-            await session.TopicUpdate.SetAsync<IJSON>(keyword, Diffusion.DataTypes.JSON.FromJSONString(newValue));
+            await session.TopicUpdate.SetAsync<IJSON>(keyword, Diffusion.DataTypes.JSON.FromJSONString(newValue)).ConfigureAwait(false);
 
 
 
             session.Close();
+
+            Console.WriteLine(newValue);
+
+            res = newValue + "\n";
 
         }
     }

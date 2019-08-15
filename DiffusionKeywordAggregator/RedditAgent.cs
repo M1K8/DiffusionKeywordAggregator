@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 
 namespace DiffusionKeywordAggregator
 {
-    class RedditAgent : GenericGatherAgent
+    public class RedditAgent : GenericGatherAgent
     {
-        static readonly HttpClient client = new HttpClient();
+        private static readonly HttpClient client = new HttpClient();
         public RedditAgent(string keyword) : base(keyword)
         {
             website = "reddit";
@@ -43,8 +43,8 @@ namespace DiffusionKeywordAggregator
 
 
 
-                string post = await responsePostsBody;
-                string comms = await responseCommentsBody;
+                string post = await responsePostsBody.ConfigureAwait(false);
+                string comms = await responseCommentsBody.ConfigureAwait(false);
 
 
                 postRes.Dispose();
@@ -73,14 +73,14 @@ namespace DiffusionKeywordAggregator
                     result += Convert.ToInt32(r["doc_count"].ToString());
                 }
 
-                
 
 
 
-                await publish();
+
+                await publish().ConfigureAwait(false);
                 prev = ((long)(DateTime.UtcNow.Subtract(DateTime.UnixEpoch).TotalSeconds) - 100);
 
-                Thread.Sleep(TimeSpan.FromMilliseconds(10000));
+                await Task.Delay(TimeSpan.FromMilliseconds(10000)).ConfigureAwait(false); 
             }
         }
     }
