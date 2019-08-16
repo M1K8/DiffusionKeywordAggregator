@@ -7,7 +7,7 @@ namespace DiffusionKeywordAggregator
 {
     public abstract class GenericGatherAgent
     {
-        protected static string searchTerm = "";
+        protected string searchTerm = "";
         protected string website = "";
         protected int result = -1;
         protected long prev; // = (int)DateTime.UtcNow.Subtract(DateTime.MinValue).TotalSeconds;

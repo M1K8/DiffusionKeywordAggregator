@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Net.Http;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Tweetinvi;
 using Tweetinvi.Parameters;
@@ -22,7 +19,7 @@ namespace DiffusionKeywordAggregator
 
         public TwitterAgent(string keyword) : base(keyword)
         {
-
+           
             website = "twitter";
 
             result = 0;

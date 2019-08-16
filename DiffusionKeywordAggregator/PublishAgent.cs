@@ -57,9 +57,16 @@ namespace DiffusionKeywordAggregator
 
             await session.TopicControl.AddTopicAsync(keyword, new Prop(dict), new CancellationToken()).ConfigureAwait(false);
 
+            
+
 
 
             await session.TopicUpdate.SetAsync<IJSON>(keyword, Diffusion.DataTypes.JSON.FromJSONString(newValue)).ConfigureAwait(false);
+
+            string viewMap = $"map >{keyword} to count/{keyword} as <value(/info)>";
+
+
+            await session.Topics.CreateTopicViewAsync($"count/{keyword}", viewMap).ConfigureAwait(false);
 
 
 

@@ -1,10 +1,10 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using DiffusionKeywordAggregator;
-using System.Windows.Threading;
 
 namespace ChartView
 {
@@ -13,7 +13,8 @@ namespace ChartView
     /// </summary>
     /// 
     public partial class MainWindow : Window
-    {     
+    {
+        HashSet<string> words = new HashSet<string>();
         public MainWindow()
         {
             InitializeComponent();
@@ -59,6 +60,12 @@ namespace ChartView
             }
             else
             {
+                if (words.Contains(keywordBox.Text))
+                {
+                    MessageBox.Show("Word " + keywordBox.Text + " is already being tracked, try another word");
+                    return;
+                }
+                words.Add(keywordBox.Text);
                 RedditAgent r = new RedditAgent(keywordBox.Text);
                 TwitterAgent t = new TwitterAgent(keywordBox.Text);
 
